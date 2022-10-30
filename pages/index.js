@@ -32,8 +32,20 @@ export default function Home() {
     }
   }, [wallet.autoConnect, wallet.wallet, wallet.connect]);
   
-  const inc = async () => {const mintAmoutInput = document.getElementById('mint-amount-input'); mintInfo.numToMint += 1; mintAmoutInput.value = mintInfo.numToMint;}
-  const dec = async () => {const mintAmoutInput = document.getElementById('mint-amount-input'); mintInfo.numToMint -= 1; mintAmoutInput.value = mintInfo.numToMint;}
+  const inc = async () => {
+    const mintAmoutInput = document.getElementById('mint-amount-input'); 
+    if (mintInfo.numToMint < 3) {
+      mintInfo.numToMint += 1; 
+      mintAmoutInput.value = mintInfo.numToMint;
+    }
+  }
+  const dec = async () => {
+    const mintAmoutInput = document.getElementById('mint-amount-input'); 
+    if (mintInfo.numToMint > 1) {
+      mintInfo.numToMint -= 1; 
+      mintAmoutInput.value = mintInfo.numToMint;
+    }
+  }
 
   const mint = async () => {
     if (wallet.account?.address?.toString() === undefined || mintInfo.minting) return;
