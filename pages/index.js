@@ -35,6 +35,7 @@ export default function Home() {
 
   const [decActive, setDecActive] = useState(true);
   const [incActive, setIncActive] = useState(false);
+  const [notificationActive, setNotificationActive] = useState(false);
 
   const inc = async () => {
     const mintAmoutInput = document.getElementById('mint-amount-input'); 
@@ -64,7 +65,18 @@ export default function Home() {
     }
   }
 
+  function timeout(delay) {
+    return new Promise( res => setTimeout(res, delay) );
+  }
+
   const mint = async () => {
+    if (wallet.account?.address?.toString() === undefined) {
+      setNotificationActive(current => !current);
+      console.log("this executed")
+      await timeout(3000);
+      setNotificationActive(current => !current);
+      console.log("this executed")
+    }
     if (wallet.account?.address?.toString() === undefined || mintInfo.minting) return;
 
     console.log(wallet.account?.address?.toString());
@@ -223,7 +235,10 @@ export default function Home() {
                 <h6>{timeLeftToMint.presale === "LIVE" ? "LIVE" : timeLeftToMint.presale.days + " days : " + timeLeftToMint.presale.hours + " hours : " + timeLeftToMint.presale.minutes + " minutes : " + timeLeftToMint.presale.seconds + " seconds"}</h6>
               </div>
             </div>
-            </div>
+          <div className={styles.notification} style={{opacity: notificationActive ? '1' : ''}}>
+            <h6 className={styles.notificationtext}>Please connect your wallet at the top right of the page</h6>
+          </div>  
+          </div>
 
           <Modal id="mint-results-modal" show={mintInfo.success} onHide={() => setMintInfo({...mintInfo, success: false, mintedNfts: []})} centered size="lg">
             <Modal.Body className="d-flex flex-column align-items-center pt-5 pb-3">
