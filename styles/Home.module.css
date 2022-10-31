@@ -207,7 +207,7 @@
   align-items: center;
   margin: 1rem 4rem;
   padding: .5rem 0;
-  filter: brightness(.75);
+  filter: brightness(1);
 
   transition: all .4s;
 }
@@ -224,7 +224,7 @@
 }
 
 .walletAdapterOption:hover {
-  filter: brightness(1);
+  filter: brightness(0.75);
 }
 /* .walletAdapterOption:hover img {
   width: 35px;

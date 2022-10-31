@@ -44,6 +44,7 @@ input[type=number] {
 }
 
 .modal-content {
-  background: #111111!important;
+  background: rgba(0, 0, 0, 0.9)!important;
+  border: 1px solid white;
   color: white!important;
 }
