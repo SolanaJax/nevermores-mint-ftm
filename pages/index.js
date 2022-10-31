@@ -32,16 +32,33 @@ export default function Home() {
     }
   }, [wallet.autoConnect, wallet.wallet, wallet.connect]);
   
+
+  const [decActive, setDecActive] = useState(true);
+  const [incActive, setIncActive] = useState(false);
+
   const inc = async () => {
     const mintAmoutInput = document.getElementById('mint-amount-input'); 
-    if (mintInfo.numToMint < 3) {
+    if (mintInfo.numToMint === 1) {
+      setDecActive(current => !current);
+      mintInfo.numToMint += 1; 
+    } else if (mintInfo.numToMint === 2) {
+      setIncActive(current => !current);
+      mintInfo.numToMint += 1; 
+    } else if (mintInfo.numToMint < 3) {
       mintInfo.numToMint += 1; 
       mintAmoutInput.value = mintInfo.numToMint;
     }
   }
+
   const dec = async () => {
     const mintAmoutInput = document.getElementById('mint-amount-input'); 
-    if (mintInfo.numToMint > 1) {
+    if (mintInfo.numToMint === 2) {
+      setDecActive(current => !current);
+      mintInfo.numToMint -= 1; 
+    } else if (mintInfo.numToMint === 3) {
+      setIncActive(current => !current);
+      mintInfo.numToMint -= 1; 
+    } else if (mintInfo.numToMint > 1) {
       mintInfo.numToMint -= 1; 
       mintAmoutInput.value = mintInfo.numToMint;
     }
@@ -173,8 +190,8 @@ export default function Home() {
             <>
               <div className="d-flex align-items-center my-3">
                 <div className={styles.inputbtnsbox}>
-                <button onClick={inc} className={styles.inputbtns} >▲</button>
-                <button onClick={dec} className={styles.inputbtns} >▼</button>
+                <button onClick={inc} className={styles.inputbtns} style={{border: incActive ? '1px solid grey' : ''}}>▲</button>
+                <button onClick={dec} className={styles.inputbtns} style={{border: decActive ? '1px solid grey' : ''}}>▼</button>
                 </div>
                 <input id="mint-amount-input" className={`${styles.defaultInput} me-3`} type="number" min="1" max={candyMachineData.data.maxMintsPerWallet === undefined ? 10 : Math.min(candyMachineData.data.maxMintsPerWallet, candyMachineData.data.numUploadedTokens - candyMachineData.data.numMintedTokens)} value={mintInfo.numToMint} onChange={(e) => setMintInfo({...mintInfo, numToMint: e.target.value})} />
                 <button className={styles.button} onClick={mint} disabled={!canMint}>{mintInfo.minting ? <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner> : "Mint"}</button>
