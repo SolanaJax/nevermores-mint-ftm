@@ -38,7 +38,6 @@ export default function Home() {
   const [notificationActive, setNotificationActive] = useState(false);
 
   const inc = async () => {
-    const mintAmoutInput = document.getElementById('mint-amount-input'); 
     if (mintInfo.numToMint === 1) {
       setDecActive(current => !current);
       mintInfo.numToMint += 1; 
@@ -52,7 +51,6 @@ export default function Home() {
   }
 
   const dec = async () => {
-    const mintAmoutInput = document.getElementById('mint-amount-input'); 
     if (mintInfo.numToMint === 2) {
       setDecActive(current => !current);
       mintInfo.numToMint -= 1; 
@@ -203,7 +201,9 @@ export default function Home() {
                 <button onClick={inc} className={styles.inputbtns} style={{border: incActive ? '1px solid grey' : ''}}>▲</button>
                 <button onClick={dec} className={styles.inputbtns} style={{border: decActive ? '1px solid grey' : ''}}>▼</button>
                 </div>
-                <input id="mint-amount-input" className={`${styles.defaultInput} me-3`} type="number" min="1" max={candyMachineData.data.maxMintsPerWallet === undefined ? 10 : Math.min(candyMachineData.data.maxMintsPerWallet, candyMachineData.data.numUploadedTokens - candyMachineData.data.numMintedTokens)} value={mintInfo.numToMint} onChange={(e) => setMintInfo({...mintInfo, numToMint: e.target.value})} />
+                <div id="mint-amount-input" className={`${styles.defaultInput} me-3`}>
+                  <p style={{marginTop: "15px"}}>{mintInfo.numToMint}</p>
+                </div>
                 <button className={styles.button} onClick={mint} disabled={!canMint}>{mintInfo.minting ? <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner> : "Mint"}</button>
               </div>
             </>}
