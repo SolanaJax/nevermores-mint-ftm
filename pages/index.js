@@ -72,10 +72,8 @@ export default function Home() {
   const mint = async () => {
     if (wallet.account?.address?.toString() === undefined) {
       setNotificationActive(current => !current);
-      console.log("this executed")
       await timeout(3000);
       setNotificationActive(current => !current);
-      console.log("this executed")
     }
     if (wallet.account?.address?.toString() === undefined || mintInfo.minting) return;
 
