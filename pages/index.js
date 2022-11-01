@@ -25,6 +25,7 @@ export default function Home() {
   const [mintInfo, setMintInfo] = useState({numToMint: 1, minting: false, success: false, mintedNfts: []})
 
   const [canMint, setCanMint] = useState(false)
+  const [data, setData] = useState();
 
   useEffect(() => {
     if (!wallet.autoConnect && wallet.wallet?.adapter) {
@@ -80,7 +81,7 @@ export default function Home() {
     // Generate a transaction
     const payload = {
       type: "entry_function_payload",
-      function: `${CONTRACT_ADDRESS}::candy_machine_v2::mint_tokens`,
+      function: `${CONTRACT_ADDRESS}::ftmpad::mint_tokens`,
       type_arguments: [],
       arguments: [
       	candyMachineAddress,
@@ -150,6 +151,17 @@ export default function Home() {
     setIsFetchignCmData(false)
   }
 
+  async function getImgFromApiAsync(url) {
+   return fetch(url)
+   .then((response) => response.json())
+   .then((responseJson) => {
+     setData(responseJson.image);
+   })
+   .catch((error) => {
+     console.error(error);
+   });
+}
+
   function verifyTimeLeftToMint() {
     const mintTimersTimeout = setTimeout(verifyTimeLeftToMint, 1000)
     if (candyMachineData.data.presaleMintTime === undefined || candyMachineData.data.publicMintTime === undefined) return
@@ -158,10 +170,19 @@ export default function Home() {
     setTimeLeftToMint({timeout : mintTimersTimeout, presale: cmHelper.getTimeDifference(currentTime, candyMachineData.data.presaleMintTime), public: cmHelper.getTimeDifference(currentTime, candyMachineData.data.publicMintTime)})
   }
 
-  useEffect(() => {
-    fetchCandyMachineData(true)
-    setInterval(fetchCandyMachineData, autoCmRefresh)
-  }, [])
+ useEffect(() => {
+    fetchCandyMachineData();
+    async function fetchCandyMachineData() {
+        const cmResourceAccount = await cmHelper.getCandyMachineResourceAccount();
+        const collectionInfo = await cmHelper.getCandyMachineCollectionInfo(cmResourceAccount);
+        const configData = await cmHelper.getCandyMachineConfigData(collectionInfo.candyMachineConfigHandle);
+        setCandyMachineData({...candyMachineData, data: {cmResourceAccount, ...collectionInfo, ...configData}})
+    }
+    const interval = setInterval(() => {
+        fetchCandyMachineData();
+    }, 5000);
+    return () => clearInterval(interval);
+    }, []);
 
   useEffect(() => {
     clearTimeout(timeLeftToMint.timeout)
@@ -226,11 +247,11 @@ export default function Home() {
               </div>
               <div className={styles.spacebetween}>
                 <h6>Presale Mint:</h6>
-                <h6>{timeLeftToMint.public === "LIVE" ? "LIVE" : timeLeftToMint.public.days + " days : " + timeLeftToMint.public.hours + " hours : " + timeLeftToMint.public.minutes + " minutes : " + timeLeftToMint.public.seconds + " seconds"}</h6>
+                <h6>{timeLeftToMint.presale === "LIVE" ? "LIVE" : timeLeftToMint.presale.days + " d : " + timeLeftToMint.presale.hours + " h : " + timeLeftToMint.presale.minutes + " m : " + timeLeftToMint.presale.seconds + " s"}</h6>
               </div>
               <div className={styles.spacebetween}>
                 <h6>Public Mint: </h6>
-                <h6>{timeLeftToMint.presale === "LIVE" ? "LIVE" : timeLeftToMint.presale.days + " days : " + timeLeftToMint.presale.hours + " hours : " + timeLeftToMint.presale.minutes + " minutes : " + timeLeftToMint.presale.seconds + " seconds"}</h6>
+                <h6>{timeLeftToMint.public === "LIVE" ? "LIVE" : timeLeftToMint.public.days + " d : " + timeLeftToMint.public.hours + " h : " + timeLeftToMint.public.minutes + " m : " + timeLeftToMint.public.seconds + " s"}</h6>
               </div>
             </div>
           <div className={styles.notification} style={{opacity: notificationActive ? '1' : ''}}>
@@ -242,7 +263,7 @@ export default function Home() {
             <Modal.Body className="d-flex flex-column align-items-center pt-5 pb-3">
                 <div className="d-flex justify-content-center w-100 my-5" style={{flexWrap: "wrap"}}>
                     {mintInfo.mintedNfts.map(mintedNft => <div key={mintedNft.name} className={`${styles.mintedNftCard} d-flex flex-column mx-3`}>
-                        <img src={mintedNft.imageUri === null ? "" : mintedNft.imageUri} />
+                        <img src={mintedNft.imageUri === null ? "" : getImgFromApiAsync(mintedNft.imageUri)} />
                         <h5 className="text-white text-center mt-2">{mintedNft.name}</h5>
                     </div>)}
                 </div>

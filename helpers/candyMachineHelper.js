@@ -7,7 +7,7 @@ async function getCandyMachineResourceAccount() {
     const resources = response.data;
 
     for (const resource of resources) {
-        if (resource.type === `${CONTRACT_ADDRESS}::candy_machine_v2::ResourceData`) {
+        if (resource.type === `${CONTRACT_ADDRESS}::ftmpad::ResourceData`) {
             return resource.data.resource_account.account;
         }
     }
@@ -30,7 +30,7 @@ async function getCandyMachineCollectionInfo(
             collectionInfo.tokenDataHandle = resource.data.token_data.handle;
             continue;
         }
-        if (resource.type === `${CONTRACT_ADDRESS}::candy_machine_v2::CollectionConfigs`) {
+        if (resource.type === `${CONTRACT_ADDRESS}::ftmpad::CollectionConfigs`) {
             collectionInfo.candyMachineConfigHandle = resource.data.collection_configs.handle;
         }
     }
@@ -43,7 +43,7 @@ async function getCandyMachineConfigData(
 ) {
     const data = JSON.stringify({
         "key_type": "vector<u8>",
-        "value_type": `${CONTRACT_ADDRESS}::candy_machine_v2::CollectionConfig`,
+        "value_type": `${CONTRACT_ADDRESS}::ftmpad::CollectionConfig`,
         "key": stringToHex(collectionName)
     });
     const customConfig = {
